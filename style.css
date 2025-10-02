@@ -1,0 +1,27 @@
+body {
+    background-color: #ededed;
+    padding: 0 50px 50px 50px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.main {
+    display: flex;
+    padding-top: 10px;
+}
+
+.title {
+    text-align: center;
+    font-size: 50px;
+}
+
+footer {
+    text-align: center;
+    margin: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 70px;
+}
