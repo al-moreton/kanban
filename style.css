@@ -1,6 +1,6 @@
 body {
     background-color: #ededed;
-    padding: 0 50px 50px 50px;
+    padding: 50px 50px 50px 50px;
     display: flex;
     flex-direction: column;
     gap: 15px;
@@ -11,9 +11,69 @@ body {
     padding-top: 10px;
 }
 
-.title {
-    text-align: center;
-    font-size: 50px;
+.kanban-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+button {
+    background-color: white;
+    border: 1px solid black;
+    padding: 8px 15px 8px 15px;
+    font-size: 13px;
+}
+
+.button-primary {
+    background-color: #264653;
+    color: white;
+}
+
+.button-primary:hover {
+    background-color: #1c353e;
+}
+
+button:hover {
+    background-color: rgb(226, 224, 224);
+}
+
+.kanban-board {
+    background-color: white;
+    padding: 10px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+.kanban-column {
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.experiment-card {
+    background-color: #ededed;
+    padding: 10px;
+}
+
+.kanban-column-title {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+dialog {
+    border: none;
+    min-width: 400px;
+}
+
+form > * {
+    margin-top: 15px;
+}
+
+dialog > h2 {
+    margin: 0px;
 }
 
 footer {
