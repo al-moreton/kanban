@@ -5,7 +5,7 @@ import { Kanban } from './kanban.js';
 class KanbanApp {
     constructor() {
         this.experiments = new ExperimentStorage();
-        this.workflow = new WorkflowStorage();
+        this.workflow = new WorkflowStorage(this.experiments);
         this.kanban = new Kanban(this.experiments, this.workflow);
     }
 
@@ -30,6 +30,12 @@ class KanbanApp {
             }
             if (e.target.classList.contains('add-experiment-form-close')) {
                 this.kanban.closeAddExperimentModal();
+            }
+        })
+
+        document.querySelector('.kanban-settings-modal').addEventListener('click', (e) => {
+            if (e.target.classList.contains('kanban-settings-close')) {
+                this.kanban.closeSettingsModal();
             }
         })
     }

@@ -11,18 +11,12 @@ body {
     padding-top: 10px;
 }
 
-.kanban-header {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-    gap: 10px;
-}
-
 button {
     background-color: white;
     border: 1px solid black;
     padding: 8px 15px 8px 15px;
     font-size: 13px;
+    border-radius: 3px;
 }
 
 .button-primary {
@@ -36,6 +30,14 @@ button {
 
 button:hover {
     background-color: rgb(226, 224, 224);
+}
+
+/* Kanban board */
+.kanban-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    gap: 10px;
 }
 
 .kanban-board {
@@ -63,19 +65,6 @@ button:hover {
     font-weight: 600;
 }
 
-dialog {
-    border: none;
-    min-width: 400px;
-}
-
-form > * {
-    margin-top: 15px;
-}
-
-dialog > h2 {
-    margin: 0px;
-}
-
 footer {
     text-align: center;
     margin: auto;
@@ -84,4 +73,79 @@ footer {
     align-items: center;
     gap: 10px;
     margin-top: 70px;
+}
+
+
+/* Modals */
+dialog {
+    border: none;
+    min-width: 400px;
+}
+
+form>* {
+    margin-top: 15px;
+}
+
+.kanban-settings-modal>form>* {
+    margin-top: 0px;
+}
+
+dialog>h2 {
+    margin: 0px;
+}
+
+.settings-delete-status-button {
+    padding: 3px 8px 3px 8px;
+    font-size: 10px;
+    background-color: #E76F51;
+    border: none;
+    max-width: 20px;
+}
+
+.settings-add-status-button {
+    padding: 5px 10px 5px 10px;
+    font-size: 10px;
+    background-color: #2A9D8F;
+    border: none;
+    max-width: 30px;
+}
+
+.workflow-list {
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.drop {
+    border: 2px dashed #ededed;
+}
+
+.workflow-list-card {
+    display: grid;
+    grid-template-columns: [first] 60% [two] 8%;
+    gap: 15px;
+    transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+    cursor: grab;
+    padding: 10px;
+}
+
+.workflow-list-card:active {
+    cursor: grabbing;
+}
+
+.workflow-list-card > div {
+    pointer-events: none;
+}
+
+.workflow-list-card.dragging {
+    opacity: 0.5;
+    transform: scale(0.8);
+}
+
+.settings-add-status-form {
+    padding: 0 10px 10px 10px;
+}
+
+.kanban-settings-close {
+    margin-top: 15px;
 }

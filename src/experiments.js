@@ -36,17 +36,17 @@ class ExperimentStorage {
     loadExperiments() {
         const data = JSON.parse(localStorage.getItem(this.storageKey)) || [];
         this.experimentArray = data.map(Experiment.fromJSON);
-        if (this.experimentArray.length === 0) this.seedExperiments();
+        // if (this.experimentArray.length === 0) this.seedExperiments();
     }
 
-    seedExperiments() {
-        this.experimentArray = [
-            new Experiment('Test 1', 'planning'),
-            new Experiment('Test 2', 'planning'),
-            new Experiment('Test 3', 'design'),
-        ];
-        this.saveExperiments();
-    }
+    // seedExperiments() {
+    //     this.experimentArray = [
+    //         new Experiment('Test 1', 'planning'),
+    //         new Experiment('Test 2', 'planning'),
+    //         new Experiment('Test 3', 'design'),
+    //     ];
+    //     this.saveExperiments();
+    // }
 }
 
 export { Experiment, ExperimentStorage };

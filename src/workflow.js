@@ -1,5 +1,5 @@
 class Workflow {
-    constructor(name,order) {
+    constructor(name, order) {
         this.id = crypto.randomUUID();
         this.name = name;
         this.order = order;
@@ -21,13 +21,16 @@ class Workflow {
 }
 
 class WorkflowStorage {
-    constructor() {
+    constructor(experiments) {
         this.storageKey = 'myWorkflow';
         this.workflowArray = [];
+        this.experiments = experiments;
         this.loadWorkflow();
     }
 
     saveWorkflow() {
+        // order workflow on every save
+        // this.workflowArray.sort((a, b) => a.order - b.order);
         localStorage.setItem(this.storageKey, JSON.stringify(this.workflowArray));
     }
 
@@ -37,12 +40,39 @@ class WorkflowStorage {
         if (this.workflowArray.length === 0) this.seedWorkflow();
     }
 
+    addStatus(status) {
+        const newStatusOrder = this.workflowArray.length + 1;
+        const newStatus = new Workflow(status, newStatusOrder);
+        this.workflowArray.push(newStatus);
+        this.saveWorkflow();
+    }
+
+    deleteStatus(status) {
+        // Need to stop deletion if only one status is left
+        const index = this.workflowArray.findIndex(b => b.id == status);
+        if (index >= 0) {
+            const targetStatusIndex = index === 0 ? 1 : 0;
+            const targetStatusId = this.workflowArray[targetStatusIndex].id;
+            const targetStatusName = this.workflowArray[targetStatusIndex].name;
+
+            this.experiments.experimentArray.forEach(experiment => {
+                if (experiment.workflowId === status) {
+                    experiment.workflowId = targetStatusId;
+                    experiment.workflow = targetStatusName;
+                }
+            })
+            this.workflowArray.splice(index, 1);
+            this.experiments.saveExperiments();
+        }
+        this.saveWorkflow();
+    }
+
     seedWorkflow() {
         this.workflowArray = [
-            new Workflow('planning'),
-            new Workflow('design'),
-            new Workflow('dev'),
-            new Workflow('launch'),
+            new Workflow('planning', 1),
+            new Workflow('design', 3),
+            new Workflow('dev', 2),
+            new Workflow('launch', 4),
         ];
         this.saveWorkflow();
     }
