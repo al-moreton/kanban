@@ -1,7 +1,8 @@
 class Experiment {
-    constructor(title, workflow, workflowId) {
+    constructor(title, workflow, workflowId, description) {
         this.id = crypto.randomUUID();
         this.title = title;
+        this.description = description;
         this.workflow = workflow;
         this.workflowId = workflowId;
     }
@@ -10,13 +11,14 @@ class Experiment {
         return {
             id: this.id,
             title: this.title,
+            description: this.description,
             workflow: this.workflow,
             workflowId: this.workflowId,
         }
     }
 
     static fromJSON(obj) {
-        const n = new Experiment(obj.title, obj.workflow, obj.workflowId);
+        const n = new Experiment(obj.title, obj.workflow, obj.workflowId, obj.description);
         n.id = obj.id;
         return n;
     }

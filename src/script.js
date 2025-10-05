@@ -44,14 +44,16 @@ class KanbanApp {
         e.preventDefault();
         const modal = document.querySelector('.add-experiment-modal');
         const titleInput = modal.querySelector('#experiment-title');
+        const descriptionInput = modal.querySelector('#experiment-description');
         const statusDropdown = modal.querySelector('#experiment-status');
 
         const title = titleInput.value.trim();
+        const description = descriptionInput.value.trim();
         const workflow = statusDropdown.value;
         const workflowId = statusDropdown.selectedOptions[0].dataset.id;
 
         if (title && workflow) {
-            const newExperiment = new Experiment(title, workflow, workflowId);
+            const newExperiment = new Experiment(title, workflow, workflowId, description);
             this.experiments.experimentArray.push(newExperiment);
             this.experiments.saveExperiments();
             this.kanban.closeAddExperimentModal();

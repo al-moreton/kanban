@@ -41,17 +41,26 @@ class Kanban {
             return false;
         }
         const orderedColumns = this.workflow.workflowArray.sort((a, b) => a.order - b.order);
-        this.kanbanDiv.style.gridTemplateColumns = `repeat(${orderedColumns.length}, 1fr)`;
+        this.kanbanDiv.style.gridTemplateColumns = `repeat(${orderedColumns.length}, minmax(100px, 1fr))`;
         for (let i = 0; i < orderedColumns.length; i++) {
+            const experiments = this.experiments.experimentArray.filter(experiment => experiment.workflowId == orderedColumns[i].id)
             const div = document.createElement('div');
             div.classList.add('kanban-column');
             div.dataset.id = orderedColumns[i].id;
             div.innerHTML = `
-                <div class="kanban-column-title">
-                    ${orderedColumns[i].name}
+                <div class="kanban-column-header">
+                    <div class="kanban-column-title">
+                        ${orderedColumns[i].name} <span class="kanban-column-number">${experiments.length}</span>
+                    </div>
+                    <div class="kanban-column-button" data-status="${orderedColumns[i].id}"></div>
                 </div>
         `;
             this.kanbanDiv.appendChild(div);
+            div.addEventListener('click', (e) => {
+                if (e.target.classList.contains('kanban-column-button')) {
+                    this.addExperiment.open(orderedColumns[i].id);
+                }
+            })
         }
         return true;
     }
@@ -64,8 +73,8 @@ class Kanban {
             <div class="experiment-title">
                 ${experiment.title}
             </div>
-            <div class="experiment-status">
-                ${experiment.workflow}
+            <div class="experiment-description">
+                ${experiment.description}
             </div>
         `;
         column.appendChild(div);

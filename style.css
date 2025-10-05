@@ -1,5 +1,5 @@
 body {
-    background-color: #ededed;
+    background-color: #121212;
     padding: 50px 50px 50px 50px;
     display: flex;
     flex-direction: column;
@@ -32,58 +32,166 @@ button:hover {
     background-color: rgb(226, 224, 224);
 }
 
+.kanban-settings-button {
+    padding: 8px;
+}
+
+.kanban-settings-button::before {
+    font-family: 'FontAwesome';
+    content: '\f013';
+    color: #181818;
+}
+
 /* Kanban board */
 .kanban-header {
     display: flex;
     flex-direction: row;
-    justify-content: flex-end;
+    justify-content: space-between;
     gap: 10px;
+}
+
+.kanban-header-title {
+    color: #ffffff;
+    margin: 0px;
 }
 
 .kanban-board {
-    background-color: white;
-    padding: 10px;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
+    gap: 15px;
 }
 
 .kanban-column {
-    background-color: white;
+    background-color: #181818;
+    border: 1px solid #282828;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 18px;
+    padding: 15px;
+    border-radius: 4px;
 }
 
 .experiment-card {
-    background-color: #ededed;
+    background-color: #282828;
     padding: 10px;
+    border-radius: 3px;
+    border-top: 2px solid #ffffff;
+}
+
+.kanban-column-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.kanban-column-button::before {
+    font-family: 'FontAwesome';
+    content: '\2b';
+    color: #b3b3b3;
+    vertical-align: sub;
+}
+
+.kanban-column-button:hover:before {
+    color: #264653;
 }
 
 .kanban-column-title {
     font-size: 20px;
     font-weight: 600;
+    color: #ffffff;
 }
 
-footer {
-    text-align: center;
-    margin: auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    margin-top: 70px;
+.kanban-column-number {
+    color: #333333;
+    font-size: 0.8em;
 }
 
+.experiment-title {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #ffffff;
+}
+
+.experiment-description {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+    color: #b3b3b3;
+}
 
 /* Modals */
+
+#experiment-description {
+    font-family: inherit;
+}
+
 dialog {
     border: none;
     min-width: 400px;
+    background-color: #181818;
+}
+
+dialog>* {
+    color: #ffffff;
 }
 
 form>* {
     margin-top: 15px;
+}
+
+form>label {
+    color: #b3b3b3;
+}
+
+form>input,
+textarea,
+select {
+    border: none;
+    background-color: #404040;
+}
+
+form > label {
+    font-size: 0.9rem;
+}
+
+dialog::backdrop {
+        background: rgba(0, 0, 0, 0.8);
+}
+
+form > input::placeholder, textarea::placeholder, select::placeholder {
+    font-size: 0.8rem;
+    font-family: inherit;
+}
+
+.add-experiment-form > input, textarea, select {
+    display: block;
+    margin: 8px 0 15px 0;
+    padding: 10px;
+    background: none;
+    border: 1px solid #282828;
+    color: #ffffff;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.settings-add-status-form > input {
+    padding: 10px;
+    background: none;
+    border: 1px solid #282828;
+    color: #ffffff;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.settings-add-status-form {
+    display: grid;
+    grid-template-columns: [first] 75% [two] 20%;
+    gap: 15px;
+    padding: 5px;
 }
 
 .kanban-settings-modal>form>* {
@@ -92,6 +200,8 @@ form>* {
 
 dialog>h2 {
     margin: 0px;
+    margin-bottom: 20px;
+    color: #ffffff;
 }
 
 .settings-delete-status-button {
@@ -108,7 +218,6 @@ dialog>h2 {
     font-size: 10px;
     background-color: #2A9D8F;
     border: none;
-    max-width: 30px;
 }
 
 .workflow-list {
@@ -118,7 +227,7 @@ dialog>h2 {
 }
 
 .drop {
-    border: 2px dashed #ededed;
+    border: 2px dashed #404040;
 }
 
 .workflow-list-card {
@@ -128,22 +237,23 @@ dialog>h2 {
     transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
     cursor: grab;
     padding: 10px;
-    border: 1px solid #ededed;
+    border: 1px solid #404040;
     border-radius: 3px;
     margin: 5px;
+    background-color: #282828;
 }
 
 .workflow-list-card::before {
     font-family: 'FontAwesome';
     content: '\f58e';
-    color: #ededed;
+    color: #b3b3b3;
 }
 
 .workflow-list-card:active {
     cursor: grabbing;
 }
 
-.workflow-list-card > div {
+.workflow-list-card>div {
     pointer-events: none;
 }
 
@@ -152,10 +262,18 @@ dialog>h2 {
     transform: scale(0.8);
 }
 
-.settings-add-status-form {
-    padding: 0 10px 10px 10px;
-}
-
 .kanban-settings-close {
     margin-top: 15px;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    margin: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 70px;
+    color: #282828;
 }

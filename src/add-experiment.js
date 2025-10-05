@@ -5,7 +5,7 @@ class AddExperiment {
         this.workflow = workflow;
     }
 
-    open() {
+    open(addToColumn) {
         const modal = document.querySelector('.add-experiment-modal');
         const statusDropdown = modal.querySelector('#experiment-status');
 
@@ -17,6 +17,10 @@ class AddExperiment {
             option.value = workflow.name;
             option.textContent = workflow.name;
             statusDropdown.appendChild(option);
+
+            if (addToColumn && addToColumn === workflow.id) {
+                option.selected = true;
+            }
         })
 
         modal.showModal();
@@ -25,8 +29,10 @@ class AddExperiment {
     close() {
         const modal = document.querySelector('.add-experiment-modal');
         const titleInput = modal.querySelector('#experiment-title');
+        const description = modal.querySelector('textarea');
 
         titleInput.value = '';
+        description.value = '';
         modal.close();
     }
 }
