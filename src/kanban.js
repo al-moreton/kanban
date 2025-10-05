@@ -1,4 +1,5 @@
 import { KanbanSettings } from './settings.js';
+import { AddExperiment } from './add-experiment.js';
 
 class Kanban {
     constructor(experiments, workflow) {
@@ -7,6 +8,7 @@ class Kanban {
         this.kanbanDiv = document.querySelector('.kanban-board');
         this.kanbanColumns = document.querySelectorAll('.kanban-column');
         this.settings = new KanbanSettings(workflow, this);
+        this.addExperiment = new AddExperiment(workflow);
     }
 
     refreshKanban() {
@@ -70,28 +72,11 @@ class Kanban {
     }
 
     openAddExperimentModal() {
-        const modal = document.querySelector('.add-experiment-modal');
-        const statusDropdown = modal.querySelector('#experiment-status');
-
-        statusDropdown.innerHTML = '';
-
-        this.workflow.workflowArray.forEach(workflow => {
-            const option = document.createElement('option');
-            option.dataset.id = workflow.id;
-            option.value = workflow.name;
-            option.textContent = workflow.name;
-            statusDropdown.appendChild(option);
-        })
-
-        modal.showModal();
+        this.addExperiment.open();
     }
 
     closeAddExperimentModal() {
-        const modal = document.querySelector('.add-experiment-modal');
-        const titleInput = modal.querySelector('#experiment-title');
-
-        titleInput.value = '';
-        modal.close();
+        this.addExperiment.close();
     }
 
     openSettingsModal() {
