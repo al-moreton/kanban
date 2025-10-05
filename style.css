@@ -100,6 +100,7 @@ dialog>h2 {
     background-color: #E76F51;
     border: none;
     max-width: 20px;
+    justify-self: flex-end;
 }
 
 .settings-add-status-button {
@@ -122,11 +123,20 @@ dialog>h2 {
 
 .workflow-list-card {
     display: grid;
-    grid-template-columns: [first] 60% [two] 8%;
+    grid-template-columns: [first] 1% [two] 60% [three] 25%;
     gap: 15px;
     transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
     cursor: grab;
     padding: 10px;
+    border: 1px solid #ededed;
+    border-radius: 3px;
+    margin: 5px;
+}
+
+.workflow-list-card::before {
+    font-family: 'FontAwesome';
+    content: '\f58e';
+    color: #ededed;
 }
 
 .workflow-list-card:active {
