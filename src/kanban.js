@@ -30,9 +30,37 @@ class Kanban {
                     exp.forEach(experiment => {
                         this.renderExperiments(experiment, column);
                     });
+                    this.initializeColumnDragDrop(column, this.workflow.workflowArray[i].id);
                 }
             }
         }
+    }
+
+    initializeColumnDragDrop(column, workflowId) {
+        const dragManager = new DragDropManager({
+            container: column,
+            itemSelector: '.experiment-card',
+            onReorder: () => this.updateExperimentOrder(column, workflowId)
+        });
+        dragManager.init();
+    }
+
+    updateExperimentOrder(column, workflowId) {
+        console.log('hello')
+        // const cards = column.querySelectorAll('.experiment-card');
+        // let orderIndex = 0;
+        
+        // cards.forEach((card) => {
+        //     const experimentId = card.dataset.id;
+        //     const experiment = this.experiments.experimentArray.find(e => e.id === experimentId);
+        //     if (experiment) {
+        //         experiment.order = orderIndex;
+        //         orderIndex++;
+        //     }
+        // });
+        
+        // this.experiments.saveExperiments();
+        // Need to add an order property to each experiment
     }
 
     renderColumns() {
@@ -63,21 +91,13 @@ class Kanban {
                 }
             })
         }
-
-        const dragManager = new DragDropManager({
-            container: this.kanbanDiv,
-            itemSelector: '.experiment-card',
-            // onReorder: () => this.updateWorkflowOrder()
-            onReorder: null
-        });
-        dragManager.init();
-
         return true;
     }
 
     renderExperiments(experiment, column) {
         const div = document.createElement('div');
         div.classList.add('experiment-card');
+        div.setAttribute('draggable', 'true');
         div.dataset.id = experiment.id;
         div.innerHTML = `
             <div class="experiment-title">
