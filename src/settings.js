@@ -1,3 +1,5 @@
+import { DragDropManager } from './drag-drop.js';
+
 class KanbanSettings {
     constructor(workflow, kanban) {
         this.workflow = workflow;
@@ -59,60 +61,14 @@ class KanbanSettings {
             this.workflowList.appendChild(card);
             card.appendChild(status);
             card.appendChild(deleteButton);
-
-            card.addEventListener('dragstart', (e) => this.dragStart(e));
-            card.addEventListener('dragend', (e) => this.dragEnd(e));
-            card.addEventListener('dragover', (e) => this.dragOver(e));
-            card.addEventListener('dragleave', (e) => this.dragLeave(e));
-            card.addEventListener('drop', (e) => this.drop(e));
-        });
-    }
-
-    dragStart(event) {
-        event.currentTarget.classList.add('dragging');
-    }
-
-    dragEnd(event) {
-        event.currentTarget.classList.remove('dragging');
-        this.modal.querySelectorAll('.workflow-list-card').forEach(card => {
-            card.classList.remove('drop');
-        });
-        this.updateWorkflowOrder();
-    }
-
-    dragOver(event) {
-        event.preventDefault();
-        const draggingCard = this.modal.querySelector('.dragging');
-        const currentCard = event.currentTarget;
-        const dropTarget = event.currentTarget;
-
-        if (draggingCard && dropTarget !== draggingCard && dropTarget.classList.contains('workflow-list-card')) {
-            this.workflowList.insertBefore(draggingCard, dropTarget);
-        }
-
-        if (currentCard !== draggingCard && currentCard.classList.contains('workflow-list-card')) {
-            currentCard.classList.add('drop');
-        }
-    }
-
-    dragLeave(event) {
-        event.currentTarget.classList.remove('drop');
-    }
-
-    drop(event) {
-        event.preventDefault();
-
-        const draggingCard = this.modal.querySelector('.dragging');
-        const dropTarget = event.currentTarget;
-
-        this.modal.querySelectorAll('.workflow-list-card').forEach(card => {
-            card.classList.remove('drop');
         });
 
-        if (draggingCard && dropTarget !== draggingCard && dropTarget.classList.contains('workflow-list-card')) {
-            this.workflowList.insertBefore(draggingCard, dropTarget);
-            this.updateWorkflowOrder();
-        }
+        const dragManager = new DragDropManager({
+            container: this.workflowList,
+            itemSelector: '.workflow-list-card',
+            onReorder: () => this.updateWorkflowOrder()
+        });
+        dragManager.init();
     }
 
     updateWorkflowOrder() {

@@ -1,5 +1,6 @@
 import { KanbanSettings } from './settings.js';
 import { AddExperiment } from './add-experiment.js';
+import { DragDropManager } from './drag-drop.js';
 
 class Kanban {
     constructor(experiments, workflow) {
@@ -8,7 +9,7 @@ class Kanban {
         this.kanbanDiv = document.querySelector('.kanban-board');
         this.kanbanColumns = document.querySelectorAll('.kanban-column');
         this.settings = new KanbanSettings(workflow, this);
-        this.addExperiment = new AddExperiment(workflow);
+        this.addExperiment = new AddExperiment(workflow, experiments, this);
     }
 
     refreshKanban() {
@@ -62,6 +63,15 @@ class Kanban {
                 }
             })
         }
+
+        const dragManager = new DragDropManager({
+            container: this.kanbanDiv,
+            itemSelector: '.experiment-card',
+            // onReorder: () => this.updateWorkflowOrder()
+            onReorder: null
+        });
+        dragManager.init();
+
         return true;
     }
 
@@ -76,8 +86,14 @@ class Kanban {
             <div class="experiment-description">
                 ${experiment.description}
             </div>
+            <button type="button" id="edit-experiment-button" data-id="${experiment.id}">Edit</button>
         `;
         column.appendChild(div);
+        div.addEventListener('click', (e) => {
+            if (e.target.id === 'edit-experiment-button') {
+                this.addExperiment.edit(experiment.id);
+            }
+        })
     }
 
     openAddExperimentModal() {

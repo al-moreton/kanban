@@ -76,6 +76,16 @@ button:hover {
     padding: 10px;
     border-radius: 3px;
     border-top: 2px solid #ffffff;
+    cursor: grab;
+}
+
+.experiment-card:active {
+    cursor: grabbing;
+}
+
+.experiment-card.dragging {
+    opacity: 0.5;
+    /* transform: scale(0.8); */
 }
 
 .kanban-column-header {
@@ -259,7 +269,7 @@ dialog>h2 {
 
 .workflow-list-card.dragging {
     opacity: 0.5;
-    transform: scale(0.8);
+    /* transform: scale(0.8); */
 }
 
 .kanban-settings-close {
