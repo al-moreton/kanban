@@ -1,6 +1,7 @@
 import { KanbanSettings } from './settings.js';
 import { AddExperiment } from './add-experiment.js';
 import { DragDropManager } from './drag-drop.js';
+import { Notifications } from './notification.js';
 
 class Kanban {
     constructor(experiments, workflow) {
@@ -11,6 +12,16 @@ class Kanban {
         this.settings = new KanbanSettings(workflow, this);
         this.addExperiment = new AddExperiment(workflow, experiments, this);
         this.dragManager = null;
+        this.notification = new Notifications();
+
+        this.dragManager = new DragDropManager({
+            container: this.kanbanDiv,
+            itemSelector: '.experiment-card',
+            columnSelector: '.kanban-column',
+            onReorder: (columnId) => this.updateExperimentOrder(columnId),
+            onColumnChange: (experimentId, sourceColumnId, targetColumnId) => this.handleColumnChange(experimentId, sourceColumnId, targetColumnId)
+        });
+        this.dragManager.init();
     }
 
     refreshKanban() {
@@ -32,24 +43,8 @@ class Kanban {
                     });
                 }
             }
-            this.initializeBoardDragDrop();
         }
     }
-
-    initializeBoardDragDrop() {
-        if (this.dragManager) {
-            this.dragManager = null;
-        }
-
-        this.dragManager = new DragDropManager({
-            container: this.kanbanDiv,
-            itemSelector: '.experiment-card',
-            columnSelector: '.kanban-column',
-            onReorder: (columnId) => this.updateExperimentOrder(columnId),
-            onColumnChange: (experimentId, sourceColumnId, targetColumnId) => this.handleColumnChange(experimentId, sourceColumnId, targetColumnId)
-        });
-        this.dragManager.init();
-    }   
 
     handleColumnChange(experimentId, sourceColumnId, targetColumnId) {
         const experiment = this.experiments.experimentArray.find(e => e.id === experimentId);
@@ -67,9 +62,10 @@ class Kanban {
             if (!targetWorkflow.items.includes(experimentId)) {
                 targetWorkflow.items.push(experimentId);
             }
-
             this.experiments.saveExperiments();
             this.workflow.saveWorkflow();
+            this.refreshKanban();
+            this.notification.show('Experiment moved', 'success');
         }
     }
 
@@ -119,20 +115,20 @@ class Kanban {
     renderExperiments(experiment, column) {
         const div = document.createElement('div');
         div.classList.add('experiment-card');
+        div.classList.add('edit-experiment-button');
         div.setAttribute('draggable', 'true');
         div.dataset.id = experiment.id;
         div.innerHTML = `
-            <div class="experiment-title">
+            <a class="experiment-title edit-experiment-button">
                 ${experiment.title}
+            </a>
+            <div class="experiment-description edit-experiment-button">
+                ${experiment.description}
             </div>
-            <div class="experiment-description">
-                ${experiment.id}
-            </div>
-            <button type="button" id="edit-experiment-button" data-id="${experiment.id}">Edit</button>
         `;
         column.appendChild(div);
         div.addEventListener('click', (e) => {
-            if (e.target.id === 'edit-experiment-button') {
+            if (e.target.classList.contains('edit-experiment-button')) {
                 this.addExperiment.edit(experiment.id);
             }
         })

@@ -105,10 +105,16 @@ button:hover {
     padding: 10px;
     border-radius: 3px;
     border-top: 2px solid #ffffff;
-    cursor: grab;
-    user-select: none;
-    -webkit-user-select: none;
-    transition: transform 0.2s ease;
+    cursor: zoom-in;
+    /* user-select: none;
+    -webkit-user-select: none; */
+    /* transition: transform 0.2s ease; */
+}
+
+.experiment-card:hover {
+    background-color: #181818;
+    border: 1px solid #282828;
+    border-top: 2px solid #ffffff;
 }
 
 .experiment-card:active {
