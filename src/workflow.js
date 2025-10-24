@@ -1,3 +1,5 @@
+import { Notifications } from './notification.js';
+
 class Workflow {
     constructor(name, order) {
         this.id = crypto.randomUUID();
@@ -28,6 +30,7 @@ class WorkflowStorage {
         this.storageKey = 'myWorkflow';
         this.workflowArray = [];
         this.experiments = experiments;
+        this.notification = new Notifications();
         this.loadWorkflow();
     }
 
@@ -44,14 +47,26 @@ class WorkflowStorage {
 
     syncExperimentItems() {
         this.workflowArray.forEach(workflow => {
-            workflow.items = [];
+            // Remove experiment IDs that no longer exist
+            workflow.items = workflow.items.filter(itemId =>
+                this.experiments.experimentArray.some(exp => exp.id === itemId)
+            );
         });
 
+        // Add any experiments that aren't in their workflow's items array
         this.experiments.experimentArray.forEach(experiment => {
             const workflow = this.workflowArray.find(w => w.id === experiment.workflowId);
             if (workflow && !workflow.items.includes(experiment.id)) {
                 workflow.items.push(experiment.id);
             }
+        });
+
+        // Remove experiments from workflows they no longer belong to
+        this.workflowArray.forEach(workflow => {
+            workflow.items = workflow.items.filter(itemId => {
+                const experiment = this.experiments.experimentArray.find(exp => exp.id === itemId);
+                return experiment && experiment.workflowId === workflow.id;
+            });
         });
 
         this.saveWorkflow();
@@ -65,22 +80,37 @@ class WorkflowStorage {
     }
 
     deleteStatus(status) {
-        // Need to stop deletion if only one status is left
-        const index = this.workflowArray.findIndex(b => b.id == status);
-        if (index >= 0) {
-            const targetStatusIndex = index === 0 ? 1 : 0;
-            const targetStatusId = this.workflowArray[targetStatusIndex].id;
-            const targetStatusName = this.workflowArray[targetStatusIndex].name;
-
-            this.experiments.experimentArray.forEach(experiment => {
-                if (experiment.workflowId === status) {
-                    experiment.workflowId = targetStatusId;
-                    experiment.workflow = targetStatusName;
-                }
-            })
-            this.workflowArray.splice(index, 1);
-            this.experiments.saveExperiments();
+        if (this.workflowArray.length <= 1) {
+            this.notification.show('Can\'t delete status', 'error');
+            return;
         }
+
+        const index = this.workflowArray.findIndex(b => b.id == status);
+        if (index < 0) return;
+
+        const deletedWorkflow = this.workflowArray[index];
+
+        const targetStatusIndex = index === 0 ? 1 : index - 1;
+        const targetWorkflow = this.workflowArray[targetStatusIndex];
+        if (!targetWorkflow) return;
+
+        this.experiments.experimentArray.forEach(exp => {
+            if (exp.workflowId === deletedWorkflow.id) {
+                exp.workflowId = targetWorkflow.id;
+                exp.workflow = targetWorkflow.name;
+
+                // Add experiment to new workflow's items list
+                if (!targetWorkflow.items.includes(exp.id)) {
+                    targetWorkflow.items.push(exp.id);
+                }
+            }
+        });
+
+        this.workflowArray.splice(index, 1);
+
+        this.syncExperimentItems();
+
+        this.experiments.saveExperiments();
         this.saveWorkflow();
     }
 

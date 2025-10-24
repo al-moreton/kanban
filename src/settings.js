@@ -1,4 +1,5 @@
 import { DragDropManager } from './drag-drop.js';
+import { Notifications } from './notification.js';
 
 class KanbanSettings {
     constructor(workflow, kanban) {
@@ -6,6 +7,7 @@ class KanbanSettings {
         this.kanban = kanban;
         this.modal = null;
         this.workflowList = null;
+        this.notification = new Notifications();
     }
 
     open() {
@@ -20,6 +22,7 @@ class KanbanSettings {
     close() {
         this.modal.close();
         this.kanban.refreshKanban();
+        this.notification.show('Settings saved', 'success');
     }
 
     setupModalEventListeners() {
@@ -66,6 +69,7 @@ class KanbanSettings {
         const dragManager = new DragDropManager({
             container: this.workflowList,
             itemSelector: '.workflow-list-card',
+            columnSelector: '.workflow-list',
             onReorder: () => this.updateWorkflowOrder()
         });
         dragManager.init();

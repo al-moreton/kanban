@@ -2,10 +2,11 @@ class DragDropManager {
     constructor(config) {
         this.container = config.container;
         this.itemSelector = config.itemSelector;
+        this.columnSelector = config.columnSelector;
         this.onReorder = config.onReorder;
-        this.direction = config.direction || 'vertical';
-        this.onDrop = config.onDrop || null;
+        this.onColumnChange = config.onColumnChange;
         this.draggingItem = null;
+        this.sourceColumn = null;
     }
 
     init() {
@@ -20,18 +21,42 @@ class DragDropManager {
         const item = event.target.closest(this.itemSelector);
         if (item) {
             this.draggingItem = item;
+            this.sourceColumn = item.closest(this.columnSelector);
             item.classList.add('dragging');
+            event.dataTransfer.effectAllowed = 'move';
         }
     }
 
     dragEnd(event) {
         if (this.draggingItem) {
             this.draggingItem.classList.remove('dragging');
+
+            this.container.querySelectorAll(this.columnSelector).forEach(column => {
+                column.classList.remove('drag-over');
+            });
+            
             this.container.querySelectorAll(this.itemSelector).forEach(item => {
                 item.classList.remove('drop');
             });
+
+            const targetColumn = this.draggingItem.closest(this.columnSelector);
+
+            if (targetColumn && this.sourceColumn && targetColumn !== this.sourceColumn) {
+                const experimentId = this.draggingItem.dataset.id;
+                const sourceColumnId = this.sourceColumn.dataset.id;
+                const targetColumnId = targetColumn.dataset.id;
+                
+                if (this.onColumnChange) {
+                    this.onColumnChange(experimentId, sourceColumnId, targetColumnId);
+                }
+            }
+
+            if (this.onReorder && targetColumn) {
+                this.onReorder(targetColumn.dataset.id);
+            }
+            
             this.draggingItem = null;
-            this.onReorder();
+            this.sourceColumn = null;
         }
     }
 
@@ -39,32 +64,37 @@ class DragDropManager {
         event.preventDefault();
         if (!this.draggingItem) return;
 
-        const dropTarget = event.target.closest(this.itemSelector);
-        if (dropTarget && dropTarget !== this.draggingItem) {
-            const dropTopPosition = dropTarget.getBoundingClientRect().top;
-            const dropBottomPosition = dropTarget.getBoundingClientRect().bottom;
-            const cursorPosition = event.clientY;
+        const targetColumn = event.target.closest(this.columnSelector);
+        if (!targetColumn) return;
 
-            if (cursorPosition <= (dropTopPosition + ((dropBottomPosition - dropTopPosition) / 2))) {
-                this.container.insertBefore(this.draggingItem, dropTarget);
+        targetColumn.classList.add('drag-over');
+
+        const dropTarget = event.target.closest(this.itemSelector);
+
+        if (dropTarget && dropTarget !== this.draggingItem) {
+            const rect = dropTarget.getBoundingClientRect();
+            const midpoint = rect.top + (rect.height / 2);
+            
+            if (event.clientY <= midpoint) {
+                targetColumn.insertBefore(this.draggingItem, dropTarget);
             } else {
-                this.container.insertBefore(this.draggingItem, dropTarget.nextSibling);
+                targetColumn.insertBefore(this.draggingItem, dropTarget.nextSibling);
             }
+        } else if (!dropTarget && event.target.closest(this.columnSelector)) {
+            targetColumn.appendChild(this.draggingItem);
         }
     }
 
     dragLeave(event) {
-        const item = event.target.closest(this.itemSelector);
-        if (item) {
-            item.classList.remove('drop');
+        const column = event.target.closest(this.columnSelector);
+        if (column && !column.contains(event.relatedTarget)) {
+            column.classList.remove('drag-over');
         }
     }
 
     drop(event) {
         event.preventDefault();
-        // if (this.onDrop) {
-        //     this.onDrop(event);
-        // }
+        event.stopPropagation();
     }
 }
 

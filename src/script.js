@@ -1,12 +1,14 @@
 import { ExperimentStorage } from './experiments.js';
 import { WorkflowStorage } from './workflow.js';
 import { Kanban } from './kanban.js';
+import { Notifications } from './notification.js';
 
 class KanbanApp {
     constructor() {
         this.experiments = new ExperimentStorage();
         this.workflow = new WorkflowStorage(this.experiments);
         this.kanban = new Kanban(this.experiments, this.workflow);
+        this.notification = new Notifications();
     }
 
     init() {
@@ -35,7 +37,4 @@ class KanbanApp {
 const app = new KanbanApp();
 app.init();
 
-// split into arrays based on status
-// render columns
-// render the experiments in each column
-// status objects should have an order number to determine layout of kanban
+app.notification.show('Kanban loaded succesfully', 'success');

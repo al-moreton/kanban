@@ -1,4 +1,5 @@
 import { Experiment } from './experiments.js';
+import { Notifications } from './notification.js';
 
 class AddExperiment {
     constructor(workflow, experiments, kanban) {
@@ -7,6 +8,7 @@ class AddExperiment {
         this.kanban = kanban;
         this.modal = null;
         this.statusDropdown = null;
+        this.notifications = new Notifications();
     }
 
     buildForm(expId, addToColumn) {
@@ -142,6 +144,7 @@ class AddExperiment {
             this.experiments.saveExperiments();
             this.close();
             this.kanban.refreshKanban();
+            this.notifications.show('Experiment added', 'success');
         }
 
         // Needs error messages on form
@@ -187,6 +190,7 @@ class AddExperiment {
                 this.experiments.saveExperiments();
                 this.close();
                 this.kanban.refreshKanban();
+                this.notifications.show('Experiment updated', 'success');
             }
         }
     }

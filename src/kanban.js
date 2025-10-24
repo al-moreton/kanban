@@ -10,6 +10,7 @@ class Kanban {
         this.kanbanColumns = document.querySelectorAll('.kanban-column');
         this.settings = new KanbanSettings(workflow, this);
         this.addExperiment = new AddExperiment(workflow, experiments, this);
+        this.dragManager = null;
     }
 
     refreshKanban() {
@@ -29,26 +30,53 @@ class Kanban {
                             this.renderExperiments(experiment, column);
                         }
                     });
-
-                    // Initialize drag-and-drop for this specific column
-                    this.initializeColumnDragDrop(column, workflowItem.id);
                 }
             }
+            this.initializeBoardDragDrop();
         }
     }
 
-    initializeColumnDragDrop(column, workflowId) {
-        const dragManager = new DragDropManager({
-            container: column,
+    initializeBoardDragDrop() {
+        if (this.dragManager) {
+            this.dragManager = null;
+        }
+
+        this.dragManager = new DragDropManager({
+            container: this.kanbanDiv,
             itemSelector: '.experiment-card',
-            onReorder: () => this.updateExperimentOrder(column, workflowId)
+            columnSelector: '.kanban-column',
+            onReorder: (columnId) => this.updateExperimentOrder(columnId),
+            onColumnChange: (experimentId, sourceColumnId, targetColumnId) => this.handleColumnChange(experimentId, sourceColumnId, targetColumnId)
         });
-        dragManager.init();
+        this.dragManager.init();
+    }   
+
+    handleColumnChange(experimentId, sourceColumnId, targetColumnId) {
+        const experiment = this.experiments.experimentArray.find(e => e.id === experimentId);
+        const targetWorkflow = this.workflow.workflowArray.find(w => w.id === targetColumnId);
+
+        if (experiment && targetWorkflow) {
+            experiment.workflowId = targetColumnId;
+            experiment.workflow = targetWorkflow.name;
+
+            const sourceWorkflow = this.workflow.workflowArray.find(w => w.id === sourceColumnId);
+            if (sourceWorkflow) {
+                sourceWorkflow.items = sourceWorkflow.items.filter(id => id !== experimentId);
+            }
+
+            if (!targetWorkflow.items.includes(experimentId)) {
+                targetWorkflow.items.push(experimentId);
+            }
+
+            this.experiments.saveExperiments();
+            this.workflow.saveWorkflow();
+        }
     }
 
-    updateExperimentOrder(column, workflowId) {
+    updateExperimentOrder(columnId) {
+        const column = this.kanbanDiv.querySelector(`.kanban-column[data-id="${columnId}"]`);
         const cards = column.querySelectorAll('.experiment-card');
-        const workflow = this.workflow.workflowArray.find(w => w.id === workflowId);
+        const workflow = this.workflow.workflowArray.find(w => w.id === columnId);
 
         if (workflow) {
             // Rebuild the items array based on current DOM order
