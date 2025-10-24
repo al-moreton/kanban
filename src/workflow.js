@@ -2,6 +2,7 @@ class Workflow {
     constructor(name, order) {
         this.id = crypto.randomUUID();
         this.name = name;
+        this.items = [];
         this.order = order;
     }
 
@@ -9,6 +10,7 @@ class Workflow {
         return {
             id: this.id,
             name: this.name,
+            items: this.items,
             order: this.order,
         }
     }
@@ -16,6 +18,7 @@ class Workflow {
     static fromJSON(obj) {
         const n = new Workflow(obj.name, obj.order);
         n.id = obj.id;
+        n.items = obj.items || [];
         return n;
     }
 }
@@ -29,8 +32,6 @@ class WorkflowStorage {
     }
 
     saveWorkflow() {
-        // order workflow on every save
-        // this.workflowArray.sort((a, b) => a.order - b.order);
         localStorage.setItem(this.storageKey, JSON.stringify(this.workflowArray));
     }
 
@@ -38,6 +39,22 @@ class WorkflowStorage {
         const data = JSON.parse(localStorage.getItem(this.storageKey)) || [];
         this.workflowArray = data.map(Workflow.fromJSON);
         if (this.workflowArray.length === 0) this.seedWorkflow();
+        this.syncExperimentItems();
+    }
+
+    syncExperimentItems() {
+        this.workflowArray.forEach(workflow => {
+            workflow.items = [];
+        });
+
+        this.experiments.experimentArray.forEach(experiment => {
+            const workflow = this.workflowArray.find(w => w.id === experiment.workflowId);
+            if (workflow && !workflow.items.includes(experiment.id)) {
+                workflow.items.push(experiment.id);
+            }
+        });
+
+        this.saveWorkflow();
     }
 
     addStatus(status) {

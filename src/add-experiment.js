@@ -132,6 +132,13 @@ class AddExperiment {
         if (title && workflow) {
             const newExperiment = new Experiment(title, workflow, workflowId, description);
             this.experiments.experimentArray.push(newExperiment);
+
+            const workflowObj = this.workflow.workflowArray.find(w => w.id === workflowId);
+            if (workflowObj) {
+                workflowObj.items.push(newExperiment.id);
+                this.workflow.saveWorkflow();
+            }
+
             this.experiments.saveExperiments();
             this.close();
             this.kanban.refreshKanban();
@@ -155,10 +162,28 @@ class AddExperiment {
         if (title && workflow) {
             const expToEdit = this.experiments.experimentArray.find(experiment => experiment.id === e.target.dataset.id);
             if (expToEdit) {
+                const oldWorkflowId = expToEdit.workflowId;
                 expToEdit.title = title;
                 expToEdit.description = description;
                 expToEdit.workflow = workflow;
                 expToEdit.workflowId = workflowId;
+
+                if (oldWorkflowId !== workflowId) {
+                    // Remove from old workflow
+                    const oldWorkflow = this.workflow.workflowArray.find(w => w.id === oldWorkflowId);
+                    if (oldWorkflow) {
+                        oldWorkflow.items = oldWorkflow.items.filter(id => id !== expToEdit.id);
+                    }
+
+                    // Add to new workflow
+                    const newWorkflow = this.workflow.workflowArray.find(w => w.id === workflowId);
+                    if (newWorkflow) {
+                        newWorkflow.items.push(expToEdit.id);
+                    }
+
+                    this.workflow.saveWorkflow();
+                }
+
                 this.experiments.saveExperiments();
                 this.close();
                 this.kanban.refreshKanban();

@@ -15,22 +15,23 @@ class Kanban {
     refreshKanban() {
         this.renderColumns();
         if (this.renderColumns()) {
-            let exp = [];
             for (let i = 0; i < this.workflow.workflowArray.length; i++) {
-                const statusName = this.workflow.workflowArray[i].name;
-                const exp = this.experiments.experimentArray.filter(
-                    experiment => experiment.workflow === statusName
-                );
-
+                const workflowItem = this.workflow.workflowArray[i];
                 const column = this.kanbanDiv.querySelector(
-                    `.kanban-column[data-id="${this.workflow.workflowArray[i].id}"]`
+                    `.kanban-column[data-id="${workflowItem.id}"]`
                 );
 
                 if (column) {
-                    exp.forEach(experiment => {
-                        this.renderExperiments(experiment, column);
+                    // Render experiments in the order specified by items array
+                    workflowItem.items.forEach(experimentId => {
+                        const experiment = this.experiments.experimentArray.find(e => e.id === experimentId);
+                        if (experiment) {
+                            this.renderExperiments(experiment, column);
+                        }
                     });
-                    this.initializeColumnDragDrop(column, this.workflow.workflowArray[i].id);
+
+                    // Initialize drag-and-drop for this specific column
+                    this.initializeColumnDragDrop(column, workflowItem.id);
                 }
             }
         }
@@ -46,21 +47,14 @@ class Kanban {
     }
 
     updateExperimentOrder(column, workflowId) {
-        console.log('hello')
-        // const cards = column.querySelectorAll('.experiment-card');
-        // let orderIndex = 0;
-        
-        // cards.forEach((card) => {
-        //     const experimentId = card.dataset.id;
-        //     const experiment = this.experiments.experimentArray.find(e => e.id === experimentId);
-        //     if (experiment) {
-        //         experiment.order = orderIndex;
-        //         orderIndex++;
-        //     }
-        // });
-        
-        // this.experiments.saveExperiments();
-        // Need to add an order property to each experiment
+        const cards = column.querySelectorAll('.experiment-card');
+        const workflow = this.workflow.workflowArray.find(w => w.id === workflowId);
+
+        if (workflow) {
+            // Rebuild the items array based on current DOM order
+            workflow.items = Array.from(cards).map(card => card.dataset.id);
+            this.workflow.saveWorkflow();
+        }
     }
 
     renderColumns() {
@@ -104,7 +98,7 @@ class Kanban {
                 ${experiment.title}
             </div>
             <div class="experiment-description">
-                ${experiment.description}
+                ${experiment.id}
             </div>
             <button type="button" id="edit-experiment-button" data-id="${experiment.id}">Edit</button>
         `;

@@ -3,6 +3,7 @@ class DragDropManager {
         this.container = config.container;
         this.itemSelector = config.itemSelector;
         this.onReorder = config.onReorder;
+        this.direction = config.direction || 'vertical';
         this.onDrop = config.onDrop || null;
         this.draggingItem = null;
     }
@@ -49,7 +50,6 @@ class DragDropManager {
             } else {
                 this.container.insertBefore(this.draggingItem, dropTarget.nextSibling);
             }
-            dropTarget.classList.add('drop');
         }
     }
 
@@ -62,9 +62,9 @@ class DragDropManager {
 
     drop(event) {
         event.preventDefault();
-        if (this.onDrop) {
-            this.onDrop(event);
-        }
+        // if (this.onDrop) {
+        //     this.onDrop(event);
+        // }
     }
 }
 

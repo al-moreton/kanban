@@ -12,6 +12,7 @@ class Experiment {
             id: this.id,
             title: this.title,
             description: this.description,
+            order: this.order,
             workflow: this.workflow,
             workflowId: this.workflowId,
         }
