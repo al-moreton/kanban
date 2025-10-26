@@ -159,11 +159,8 @@ button:hover {
 }
 
 .experiment-title {
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
+    margin-bottom: 10px;
     font-weight: 600;
-    margin-bottom: 5px;
     color: #ffffff;
 }
 

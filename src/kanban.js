@@ -119,9 +119,9 @@ class Kanban {
         div.setAttribute('draggable', 'true');
         div.dataset.id = experiment.id;
         div.innerHTML = `
-            <a class="experiment-title edit-experiment-button">
+            <div class="experiment-title edit-experiment-button">
                 ${experiment.title}
-            </a>
+            </div>
             <div class="experiment-description edit-experiment-button">
                 ${experiment.description}
             </div>
